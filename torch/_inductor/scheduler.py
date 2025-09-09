@@ -969,7 +969,11 @@ def _prune_redundant_deps(
     def should_prune(dep: Dep) -> bool:
         if isinstance(dep, WeakDep):
             op_name = name_to_buf[dep.name].defining_op_name()
-            is_redundant = name_to_dep_count[name_to_fused_node[op_name].get_name()] > 0
+            is_redundant = name_to_dep_count[
+                name_to_fused_node[op_name].get_name()
+            ] > 0 and node.scheduler.fusable_weak_dep(
+                dep, name_to_fused_node[op_name], node
+            )
             # These can occur because fused nodes always gather deps from their snodes
             # If B has a weakdep on A
             # B gets fused with C, then any time BC is fused, the weakdep will reappear
@@ -3339,6 +3343,7 @@ class Scheduler:
             - self.can_fuse(): checks if a fusion is legal
             - self.score_fusion(): assigns priority to a given fusion
         """
+        self.prune_redundant_deps(nodes)
         fused_nodes = OrderedSet(nodes)
         if fusion_log.isEnabledFor(logging.DEBUG):
             fusion_log.debug("fuse_nodes_once, candidates:")
@@ -3481,7 +3486,6 @@ class Scheduler:
             num_nodes_orig,
             len(self.nodes),
         )
-        self.prune_redundant_deps(self.nodes)
 
     def prune_redundant_deps(self, nodes: list[BaseSchedulerNode]) -> None:
         for node in nodes:
@@ -4088,6 +4092,8 @@ class Scheduler:
     ) -> bool:
         if weak_dep.name not in node1.get_buffer_names():
             return False
+        if isinstance(node1, ForeachKernelSchedulerNode):
+            return False
 
         # A weak dep can be fused if and only if the fused operation acts inplace
         # on the buffer being mutated. i.e. the same index is being read then mutated
@@ -4099,6 +4105,8 @@ class Scheduler:
         if len(mutating_writes) != 1:
             return False
         write = mutating_writes[0]
+        if isinstance(write, StarDep):
+            return False
         assert isinstance(write, MemoryDep)
 
         if free_symbol_is_type(write.index, SymT.TMP):
