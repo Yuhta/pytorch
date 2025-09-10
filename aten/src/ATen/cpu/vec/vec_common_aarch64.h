@@ -33,6 +33,8 @@
 
 #include <ATen/cpu/vec/sve/vec_float.h>
 
+#include <ATen/cpu/vec/sve/vec_bfloat16.h>
+
 #include <ATen/cpu/vec/sve/vec_double.h>
 #include <ATen/cpu/vec/sve/vec_int.h>
 
