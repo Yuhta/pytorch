@@ -14,7 +14,7 @@
 #define USE_SLEEF(sleef_code, non_sleef_code) non_sleef_code
 #endif
 
-#if defined(CPU_CAPABILITY_SVE) || defined(CPU_CAPABILITY_SVE128)
+#if defined(__ARM_FEATURE_SVE)
 
 // Define the data type of VLS(vector-length specific).
 typedef svbool_t vls_pred_t
