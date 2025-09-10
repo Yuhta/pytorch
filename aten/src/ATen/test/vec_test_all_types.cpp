@@ -381,7 +381,7 @@ namespace {
     TYPED_TEST(Hyperbolic, Tanh) {
         using vec = TypeParam;
 // NOTE: Because SVE uses ACL logic, the precision changes, hence the adjusted tolerance.
-#if defined(__ARM_FEATURE_SVE)
+#if defined(CPU_CAPABILITY_SVE)
         using UVT = UvalueType<vec>;
         UVT tolerance = getDefaultTolerance<UVT>();
         test_unary<vec>(
@@ -586,7 +586,7 @@ namespace {
         }
       }
     }
-#if defined(__ARM_FEATURE_SVE) && defined(__ARM_FEATURE_BF16)
+#if defined(CPU_CAPABILITY_SVE) && defined(__ARM_FEATURE_BF16)
     TEST(NanBfloat16, IsNan) {
       for (unsigned int ii = 0; ii < 0xFFFF; ++ii) {
         c10::BFloat16 val(ii, c10::BFloat16::from_bits());
@@ -1017,7 +1017,7 @@ namespace {
             RESOLVE_OVERLOAD(filter_fmadd));
     }
 #endif
-#if defined(__ARM_FEATURE_SVE)
+#if defined(CPU_CAPABILITY_SVE)
     // Test for counting the number of active lanes using svcntw
     TYPED_TEST(BitwiseFloatsAdditional, SVE_CountActiveLanes) {
       CACHE_ALIGN int actual_vals[1];
@@ -1067,7 +1067,7 @@ namespace {
       // Verify that the active lane count in both predicates is the same
       EXPECT_EQ(active_lanes_all, actual_vals[0]) << "Mismatch in active lane count.";
     }
-#endif  // __ARM_FEATURE_SVE
+#endif  // CPU_CAPABILITY_SVE
     template<typename vec, typename VT, int64_t mask>
     typename std::enable_if_t<(mask < 0 || mask> 255), void>
     // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
@@ -2181,7 +2181,7 @@ namespace {
       ASSERT_TRUE(vec_pinf.has_inf_nan()) << "Test failed for positive Infinity\n";
       ASSERT_TRUE(vec_ninf.has_inf_nan()) << "Test failed for negative Infinity\n";
     }
-#if !defined(__ARM_FEATURE_SVE)
+#if !defined(CPU_CAPABILITY_SVE)
     template <typename vec, typename dst_t>
     void test_convert_to(const char* dst_t_name) {
       using src_t = ValueType<vec>;
