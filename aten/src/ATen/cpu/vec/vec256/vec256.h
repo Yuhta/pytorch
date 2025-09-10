@@ -48,19 +48,6 @@ namespace at::vec {
 // accessed as `at::vec`.
 inline namespace CPU_CAPABILITY {
 
-inline std::ostream& operator<<(std::ostream& stream, const c10::qint32& val) {
-  stream << val.val_;
-  return stream;
-}
-inline std::ostream& operator<<(std::ostream& stream, const c10::qint8& val) {
-  stream << static_cast<int>(val.val_);
-  return stream;
-}
-inline std::ostream& operator<<(std::ostream& stream, const c10::quint8& val) {
-  stream << static_cast<unsigned int>(val.val_);
-  return stream;
-}
-
 template <typename T>
 std::ostream& operator<<(std::ostream& stream, const Vectorized<T>& vec) {
   T buf[Vectorized<T>::size()];
