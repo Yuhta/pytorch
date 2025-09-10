@@ -40,6 +40,10 @@
 
 #include <ATen/cpu/vec/sve/vec_qint.h>
 
+#include <ATen/cpu/vec/vec256/vec256_half.h>
+
+#include <ATen/cpu/vec/vec256/vec256_convert.h>
+
 #else // NEON
 
 #include <ATen/cpu/vec/vec128/vec128_float_neon.h>
