@@ -39,7 +39,7 @@ static CPUCapability compute_cpu_capability() {
     }
 #elif defined(HAVE_SVE_CPU_DEFINITION)
     int sve_vl = cpuinfo_get_max_arm_sve_length(); //Returns maximum SVE VL supported by your HW.
-    if (envar == "sve") {
+    if (envar == "sve" || envar == "sve256" || envar == "sve128") {
       if (sve_vl == 256) {
         if (cpuinfo_has_arm_bf16()) {
           return CPUCapability::SVE256;
